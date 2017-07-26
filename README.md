@@ -18,9 +18,13 @@ Work in progress. Todos and ideas:
 * Some simple built-in AIs
 
 # Compile
+*nix
 ###
-    javac -d build src/*/*.java src/*/*/*.java
-(todo: find a more elegant solution)
+    ./build.sh
+
+Windows
+###
+    build.bat
 
 # Run
 ###

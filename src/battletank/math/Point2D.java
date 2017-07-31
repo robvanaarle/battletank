@@ -59,7 +59,7 @@ public class Point2D {
         return distance(this.getX(), this.getY(), point.getX(), point.getY());
     }
     
-    static double distance(double x1, double y1, double x2, double y2) {
+    static public double distance(double x1, double y1, double x2, double y2) {
         x2 -= x1;
         y2 -= y1;
         return java.lang.Math.sqrt(x2 * x2 + y2 * y2);
@@ -68,6 +68,22 @@ public class Point2D {
     public void move(double distance, double angle) {
         this.setX(this.getX() + (distance * java.lang.Math.cos(angle)));
         this.setY(this.getY() + (distance * java.lang.Math.sin(angle)));
+    }
+    
+    public double angle(double x, double y) {
+        return distance(this.getX(), this.getY(), x, y);
+    }
+    
+    public double angle(Point2D point) {
+        return angle(this.getX(), this.getY(), point.getX(), point.getY());
+    }
+    
+    static public double angle(double x1, double y1, double x2, double y2) {
+        double angle = java.lang.Math.acos((x2-x1) / distance(x1, y1, x2, y2));
+        if (x2 < x1) {
+            angle *= -1;
+        }
+        return angle;
     }
     
     @Override

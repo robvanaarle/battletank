@@ -17,14 +17,13 @@ public class Shell extends Object implements battletank.math.Circle {
     protected Tank origin;
     protected double speed = 4;
     protected double width = 10;
+    protected int damage = 1;
     
     public Shell(Tank origin) {
         this.origin = origin;
         this.setHeading(origin.getHeading());
         this.setLocation(origin.getLocation());
         this.getLocation().move(origin.getWidth()/2.0 + this.getWidth()/2.0, origin.heading);
-        
-        origin.getArena().addObject(this);
     }
     
     public Tank getOrigin() {
@@ -60,7 +59,32 @@ public class Shell extends Object implements battletank.math.Circle {
         }
         
         // check if shell hit a tank
+        Object[] tanks = arena.getObjects(Tank.class);
+        for (Object object : tanks) {
+            Tank tank = (Tank) object;
+            if (tank.getLocation().distance(this.getLocation()) <= (this.getRadius() + tank.getRadius())) {
+                // hit tank
+                tank.hit(this.damage);
+                
+                //remove shell
+                this.delete();
+            }
+        }
         
+        
+    }
+    
+    @Override
+    protected battletank.objects.Object copy() {
+        Tank origin = (Tank)this.getOrigin().getNext();
+        if (origin == null) {
+            origin = (Tank)this.getOrigin();
+        }
+        
+        
+        Shell copy = new Shell(origin);
+        origin.shells.add(copy);
+        return copy;
     }
     
     @Override

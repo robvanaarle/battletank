@@ -9,6 +9,9 @@ abstract public class Object {
     protected double heading;
     protected Arena arena;
     
+    protected Object previous = null;
+    protected Object next = null;
+    
     public Object() {
         this.location = new Point2D();
         this.heading = 0;
@@ -54,9 +57,30 @@ abstract public class Object {
         this.getLocation().move(distance, heading);
     }
     
+    public Object getPrevious() {
+        return this.previous;
+    }
+    
+    public Object getNext() {
+        return this.next;
+    }
+    
+    public Object next() {
+        Object copy = this.copy();
+        copy.setArena(this.getArena());
+        copy.setLocation(new Point2D(this.getLocation()));
+        copy.setHeading(this.getHeading());
+        
+        copy.previous = this;
+        this.next = copy;
+        return copy;
+    }
+    
     abstract public void tick();
     
     abstract public void paint(Graphics g);
+    
+    abstract protected battletank.objects.Object copy();
     
     @Override
     public String toString() {

@@ -5,7 +5,9 @@
  */
 package battletank.objects;
 
+import battletank.Player;
 import battletank.math.Point2D;
+import battletank.tankai.TankAI;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -17,26 +19,49 @@ import java.util.ArrayList;
  * @author raarle
  */
 public class Tank extends Object implements battletank.math.Circle {
-    protected String name;
+    
     protected double width = 40;
     protected double maxMoveSpeed = 1;
     protected double maxTurnSpeed = 0.1;
+    protected int maxDamage = 2;
+    protected int maxShellCount = 0; //2;
+    
+    protected Player player;
     protected ArrayList<Shell> shells = new ArrayList<>();
+    protected int damage = 0;
+    protected TankAI ai;
     
-    public Tank(String name) {
-        this.setName(name);
+    public Tank(Player player, TankAI ai) {
+        this.player = player;
+        this.ai = ai;
     }
     
-    public void setName(String name) {
-        this.name = name;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
     
-    public String getName() {
-        return this.name;
+    public Player getPlayer() {
+        return this.player;
     }
     
     public void shoot() {
-        this.shells.add(new Shell(this));
+        
+        // don't shoot when the maximum number of shells has been reached
+        if (this.shells.size() >= this.maxShellCount) {
+            return;
+        }
+        
+        Shell shell = new Shell(this);
+        this.shells.add(shell);
+        this.getArena().addObject(shell);
+    }
+    
+    public void hit(int damage) {
+        this.damage += damage;
+        
+        if (this.damage >= this.maxDamage) {
+            this.delete();
+        }
     }
     
     public double getWidth() {
@@ -60,6 +85,22 @@ public class Tank extends Object implements battletank.math.Circle {
         return this.shells;
     }
     
+    public int getDamage() {
+        return this.damage;
+    }
+    
+    public int getMaxDamage() {
+        return this.maxDamage;
+    }
+    
+    public int getMaxShellCount() {
+        return this.maxShellCount;
+    }
+    
+    public void delete() {
+        this.getArena().removeObject(this);
+    }
+    
     @Override
     public void move(double distance, double heading) {
         // respect max move speed
@@ -80,32 +121,54 @@ public class Tank extends Object implements battletank.math.Circle {
         
         heading = this.getHeading() + headingDiff;
         
+        Point2D oldLocation = new Point2D(this.getLocation());
+        
         // set new heading and move in that direction
         this.setHeading(heading);
         super.move(distance, heading);
         
-        // clip against the arena
-        this.getArena().toBox().clip(this);
+        // collision detection against other tanks
+        Point2D location = this.getLocation();
+        double minDistance = this.getWidth(); // two times radius
+        
+        Object[] tanks = arena.getObjects(Tank.class);
+        for (Object object : tanks) {
+            Tank tank = (Tank)object;
+            
+            if (tank == this) {
+                continue;
+            }
+            
+            //if (location.distance(tank.getLocation()) < minDistance*5) {
+                // for now, restore old location
+                //location.setLocation(oldLocation);
+                tank.getBox().collisionDetectOutside(oldLocation, this);
+            //}
+        }
+        
+        // collision detection against the arena
+        this.getArena().toBox().collisionDetectInside(this);
     }
     
-    private int i;
+    public battletank.math.Box getBox() {
+        double x = this.getLocation().getX();
+        double y = this.getLocation().getY();
+        double r = this.getRadius();
+        
+        return new battletank.math.Box(x-r, y-r, x+r, y+r);
+    }
+    
     @Override
     public void tick() {
-        i++;
+        this.ai.tick(this);
+    }
+    
+    @Override
+    protected battletank.objects.Object copy() {
+        Tank copy = new Tank(this.getPlayer(), this.ai);
+        copy.damage = this.damage;
         
-        double headingDiff = 0;
-        int frame = i % 200;
-        if (frame >= 190 && frame < 200) {
-            headingDiff = this.maxTurnSpeed;
-        }
-        
-        //double headingDiff = this.maxTurnSpeed;
-        //headingDiff -= (i%1000) * (this.maxTurnSpeed/200.0);
-        
-        this.move(1, this.heading+headingDiff);
-        if (this.shells.size() == 0) {
-            this.shoot();
-        }
+        return copy;
     }
     
     @Override

@@ -6,10 +6,8 @@ Work in progress. Todos and ideas:
 * Buffered rendering
 * Multiple tanks:
     * Different colors
-    * Collision detection between tanks
     * Interface showing all tanks and wins
 * Balance tank properties
-* Shell hitting a tank destroys it
 * API using sockets to control tank
     * Buffering moves
     * Maximum response time for AI

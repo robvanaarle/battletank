@@ -12,7 +12,7 @@ import battletank.objects.Tank;
  * @author raarle
  */
 public class Player {
-    public int id;
+    public int player_id;
     public String name;
     public Shell[] shells;
     public double heading;
@@ -22,6 +22,8 @@ public class Player {
     
     static public Player fromTank(Tank tank) {
         Player player = new Player();
+        
+        player.player_id = tank.getId();
         
         player.shells = new Shell[tank.getShells().size()];
         for (int i = 0; i < player.shells.length; i++) {

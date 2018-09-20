@@ -177,8 +177,6 @@ public class WebServer implements Runnable {
             response.players = new Player[tanks.length];
             for (int i = 0; i < tanks.length; i++) {
                 Player player = Player.fromTank((Tank)tanks[i]);
-                player.id = i;
-                
                 response.players[i] = player;
             }
             

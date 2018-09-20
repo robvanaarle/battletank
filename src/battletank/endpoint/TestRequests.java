@@ -46,7 +46,9 @@ public class TestRequests {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setDoOutput(true);
         
-        String request = "{\"commands\": [{\"player_id\": 0, \"move\": \"forward\", \"turn\": \"left\", \"fire\": true}]}";
+        String request = "{\"commands\": [{\"player_id\": 1, \"move\": \"forward\", \"turn\": \"left\", \"fire\": true}]}";
+        
+       //request = "{\"commands\": []}";
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.write(request.getBytes());
         out.flush();

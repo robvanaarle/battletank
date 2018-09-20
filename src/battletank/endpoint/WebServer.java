@@ -14,16 +14,13 @@ import com.sun.net.httpserver.HttpHandler;
 
 
 import com.sun.net.httpserver.HttpServer;
-import static com.sun.net.httpserver.HttpServer.create;
 import java.awt.Color;
-import static java.awt.Color.blue;
-import static java.awt.Color.green;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import static java.lang.Math.random;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -81,7 +78,13 @@ public class WebServer implements Runnable {
                 responseBody = this.getResponseBody(this.getRequestBody(he));
             } catch (Exception e) {
                 ErrorResponse response = new ErrorResponse();
-                response.error = e.toString();
+                
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                String sStackTrace = sw.toString(); // stack trace as a string
+                
+                response.error = sStackTrace;
                 responseBody = gson.toJson(response);
                 
                 System.out.println(e);

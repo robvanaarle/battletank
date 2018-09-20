@@ -1,4 +1,3 @@
-
 package battletank.tankai;
 
 public class PassiveAI implements TankAI {

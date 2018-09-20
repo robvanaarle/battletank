@@ -1,8 +1,7 @@
 package battletank.tankai;
 
 public class RoundedRectangleAI implements TankAI {
-    private int tickIndex = 0;
-    private int shootCountdown = 0;
+    private long tickIndex = 0;
     private boolean inverse = false;
     
     
@@ -15,7 +14,7 @@ public class RoundedRectangleAI implements TankAI {
         this.tickIndex++;
         
         double headingDiff = 0;
-        int frame = this.tickIndex % 200;
+        long frame = this.tickIndex % 200;
         if (frame >= 150 && frame < 200) {
             headingDiff = Math.PI/4/50;
         }
@@ -25,13 +24,7 @@ public class RoundedRectangleAI implements TankAI {
         }
         
         tank.move(tank.getMaxMoveSpeed(), tank.getHeading()+headingDiff);
-
-        this.shootCountdown--;
-        if (this.shootCountdown < 0) {
-            this.shootCountdown = 20;
-            
-            tank.shoot();
-        }
         
+        tank.shoot();
     }
 }

@@ -1,35 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battletank.objects;
 
 import battletank.Player;
 import battletank.math.Point2D;
 import battletank.tankai.TankAI;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-/**
- *
- * @author raarle
- */
 public class Tank extends Object implements battletank.math.Circle {
     
     protected double width = 40;
     protected double maxMoveSpeed = 1;
     protected double maxTurnSpeed = 0.1;
-    protected int maxDamage = 2;
-    protected int maxShellCount = 0; //2;
+    protected int maxDamage = 200;
+    protected int maxShellCount = 2;
+    protected int reloadTicks = 20;
     
     protected Player player;
     protected ArrayList<Shell> shells = new ArrayList<>();
     protected int damage = 0;
     protected TankAI ai;
+    protected int reloadTimeout = 0;
     
     public Tank(Player player, TankAI ai) {
         this.player = player;
@@ -51,9 +43,15 @@ public class Tank extends Object implements battletank.math.Circle {
             return;
         }
         
+        if (this.reloadTimeout > 0) {
+            return;
+        }
+        
+        
         Shell shell = new Shell(this);
         this.shells.add(shell);
         this.getArena().addObject(shell);
+        this.reloadTimeout = reloadTicks;
     }
     
     public void hit(int damage) {
@@ -97,6 +95,14 @@ public class Tank extends Object implements battletank.math.Circle {
         return this.maxShellCount;
     }
     
+    public int getReloadTicks() {
+        return this.reloadTicks;
+    }
+    
+    public int getReloadTimeout() {
+        return this.reloadTimeout;
+    }
+    
     public void delete() {
         this.getArena().removeObject(this);
     }
@@ -128,9 +134,6 @@ public class Tank extends Object implements battletank.math.Circle {
         super.move(distance, heading);
         
         // collision detection against other tanks
-        Point2D location = this.getLocation();
-        double minDistance = this.getWidth(); // two times radius
-        
         Object[] tanks = arena.getObjects(Tank.class);
         for (Object object : tanks) {
             Tank tank = (Tank)object;
@@ -139,11 +142,7 @@ public class Tank extends Object implements battletank.math.Circle {
                 continue;
             }
             
-            //if (location.distance(tank.getLocation()) < minDistance*5) {
-                // for now, restore old location
-                //location.setLocation(oldLocation);
-                tank.getBox().collisionDetectOutside(oldLocation, this);
-            //}
+            tank.getBox().collisionDetectOutside(oldLocation, this);
         }
         
         // collision detection against the arena
@@ -160,6 +159,9 @@ public class Tank extends Object implements battletank.math.Circle {
     
     @Override
     public void tick() {
+        if (this.reloadTimeout > 0) {
+            this.reloadTimeout--;
+        }
         this.ai.tick(this);
     }
     
@@ -167,6 +169,7 @@ public class Tank extends Object implements battletank.math.Circle {
     protected battletank.objects.Object copy() {
         Tank copy = new Tank(this.getPlayer(), this.ai);
         copy.damage = this.damage;
+        copy.reloadTimeout = this.reloadTimeout;
         
         return copy;
     }
@@ -181,15 +184,15 @@ public class Tank extends Object implements battletank.math.Circle {
         int width = (int)Math.round(this.getWidth());
         
         // vehicle
-        g2.setColor(Color.cyan);
+        g2.setColor(this.getPlayer().getPrimaryColor());
         g2.fillOval(x - width/2, y - width/2, width, width);
         
         // turret
         width = width/2;
-        g2.setColor(Color.blue);
+        g2.setColor(this.getPlayer().getSecondaryColor());
         g2.fillOval(x - width/2, y - width/2, width, width);
         
-        //tube
+        // tube
         Point2D tubeEnd = new Point2D(x, y);
         tubeEnd.move(width * 4 / 3, this.getHeading());
         int tx = (int)Math.round(tubeEnd.getX());

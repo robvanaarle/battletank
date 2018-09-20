@@ -1,18 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battletank.objects;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-/**
- *
- * @author raarle
- */
 public class Shell extends Object implements battletank.math.Circle {
     protected Tank origin;
     protected double speed = 4;
@@ -90,12 +80,18 @@ public class Shell extends Object implements battletank.math.Circle {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
-        g2.setColor(Color.red);
         
         int x = (int)Math.round(this.getLocation().getX());
         int y = (int)Math.round(this.getLocation().getY());
-        int width = (int)Math.round(this.getWidth());
         
+        // base
+        g2.setColor(this.getOrigin().getPlayer().getPrimaryColor());
+        int width = (int)Math.round(this.getWidth());
+        g2.fillOval(x - width/2, y - width/2, width, width);
+        
+        // inside
+        g2.setColor(this.getOrigin().getPlayer().getSecondaryColor());
+        width = (int)Math.round(this.getWidth() * 0.6);
         g2.fillOval(x - width/2, y - width/2, width, width);
     }
 }

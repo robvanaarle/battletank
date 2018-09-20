@@ -1,12 +1,9 @@
 # battletank
-Small code contest framework for battling AI tanks
+Small code contest framework for battling AI tanks. Things are kept simple to have a nice code contest afternoon.
 
 Work in progress. Todos and ideas:
-* Timer for rendering
-* Buffered rendering
-* Multiple tanks:
-    * Different colors
-    * Interface showing all tanks and wins
+* Interface to select tanks, (re)strart and stop match
+* Better collision detection between tanks
 * Balance tank properties
 * API using sockets to control tank
     * Buffering moves
@@ -28,5 +25,3 @@ Windows
 ###
     cd build
     java battletank/Battletank
-
-Or use your IDE.

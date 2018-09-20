@@ -1,22 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battletank;
 
 import battletank.math.Point2D;
 import battletank.objects.*;
+import battletank.tankai.TankAI;
+import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JFrame;
-/**
- *
- * @author raarle
- */
+
 public class Battletank implements Runnable {
 
-    protected JFrame frame;
-    protected Panel panel;
+    protected JFrame mainWindow;
+    protected ArenaPanel arenaPanel;
+    protected PlayersPanel playersPanel;
     protected Arena arena;
     
     public Battletank() {
@@ -24,37 +19,68 @@ public class Battletank implements Runnable {
     }
     
     public void init() {
-        arena = new Arena(600, 400);
-        Tank tank1 = new Tank(new Player("Rob"), new battletank.tankai.RoundedRectangleAI(false));
+        arena = new Arena(1000, 800);
+        Player player;
+        TankAI tankAI;
+        
+        player = new Player("Rob");
+        //tankAI = new battletank.tankai.RoundedRectangleAI(false);
+        //tankAI = new battletank.tankai.StraightAheadAI();
+        tankAI = new battletank.tankai.RandomAI();
+        Tank tank1 = new Tank(player, tankAI);
         tank1.setLocation(new Point2D(30, 30));
+        tank1.setHeading(Math.PI/4);
         arena.addObject(tank1);
         
-        //Tank tank2 = new Tank(new Player("Max"), new battletank.tankai.PassiveAI());
-        Tank tank2 = new Tank(new Player("Max"), new battletank.tankai.RoundedRectangleAI(true));
-        tank2.setLocation(new Point2D(200, 30));
+        player = new Player("Geert-Jan", Color.BLACK, Color.RED);
+        tankAI = new battletank.tankai.RoundedRectangleAI(true);
+        //tankAI = new battletank.tankai.PassiveAI();
+        Tank tank2 = new Tank(player, tankAI);
+        tank2.setLocation(new Point2D(230, 220));
         tank2.setHeading(Math.PI);
         arena.addObject(tank2);
         
-        Tank tank3 = new Tank(new Player("Rob2"), new battletank.tankai.RoundedRectangleAI(false));
-        tank3.setLocation(new Point2D(200, 200));
+        player = new Player("Bas", Color.ORANGE, Color.BLACK);
+        //tankAI = new battletank.tankai.StraightAheadAI();
+        //tankAI = new battletank.tankai.RoundedRectangleAI(false);
+        //tankAI = new battletank.tankai.PassiveAI();
+        tankAI = new battletank.tankai.RandomAI();
+        //tankAI = new battletank.tankai.tankAI();
+        
+        //try {
+        //    ((battletank.tankai.NetworkAI)tankAI).accept(9000, 0);
+        //} catch (Exception e) {
+        //    System.out.println(e);
+        //}
+        
+        Tank tank3 = new Tank(player, tankAI);
+        tank3.setLocation(new Point2D(170, 220));
         tank3.setHeading(Math.PI);
         arena.addObject(tank3);
         
-        Tank tank4 = new Tank(new Player("Max2"), new battletank.tankai.RoundedRectangleAI(true));
+        player = new Player("Pieter", Color.GREEN, Color.MAGENTA);
+        tankAI = new battletank.tankai.RoundedRectangleAI(true);
+        //tankAI = new battletank.tankai.PassiveAI();
+        Tank tank4 = new Tank(player, tankAI);
         tank4.setLocation(new Point2D(30, 200));
         arena.addObject(tank4);
         
-        frame = new JFrame("BattleTank");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(arena.getWidth()+200, arena.getHeight()+200);
-        frame.setLayout(null);
+        playersPanel = new PlayersPanel(arena);
+        playersPanel.setSize(200, arena.getHeight());
+        playersPanel.setLocation(0, 0);
         
-        panel = new Panel(arena);
-        panel.setSize(arena.getWidth(), arena.getHeight());
-        panel.setLocation(100, 100);
+        arenaPanel = new ArenaPanel(arena);
+        arenaPanel.setSize(arena.getWidth(), arena.getHeight());
+        arenaPanel.setLocation(playersPanel.getWidth(), 0);
         
-        frame.add(panel);
-        frame.setVisible(true);
+        mainWindow = new JFrame("BattleTank");
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainWindow.setSize(arenaPanel.getWidth()+playersPanel.getWidth(), arenaPanel.getHeight()+20);
+        mainWindow.setLayout(null);
+        
+        mainWindow.add(playersPanel);
+        mainWindow.add(arenaPanel);
+        mainWindow.setVisible(true);
     }
     
     public void start() {
@@ -62,16 +88,19 @@ public class Battletank implements Runnable {
         t.start();
     }
     
+    @Override
     public void run() {
-        //panel.setFrame(arena.);
-        
         // generate
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 30000; i++) {
+            if (i % 100 == 0) {
+                System.out.print(i + "...");
+            }
+            
             arena.tick();
             
-            panel.setFrame(arena.currentFrame);
-            
-            frame.repaint();
+            arenaPanel.setFrame(arena.getCurrentFrame());
+            playersPanel.setFrame(arena.getCurrentFrame());
+            mainWindow.repaint();
             
             try {
                 Thread.currentThread().join(5);
@@ -83,8 +112,9 @@ public class Battletank implements Runnable {
         // replay
         ArrayList<Frame> frames = arena.getFrames();
         for (Frame f : frames) {
-            panel.setFrame(f);
-            frame.repaint();
+            arenaPanel.setFrame(f);
+            playersPanel.setFrame(arena.getCurrentFrame());
+            mainWindow.repaint();
             
             try {
                 Thread.currentThread().join(5);
@@ -94,9 +124,6 @@ public class Battletank implements Runnable {
         }
     }
     
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         Battletank app = new Battletank();
         app.init();

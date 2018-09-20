@@ -82,6 +82,16 @@ abstract public class Object {
     
     abstract protected battletank.objects.Object copy();
     
+    public void destroy() {
+        if (this.previous != null) {
+            this.previous.next = null;
+        }
+        
+        if (this.next != null) {
+            this.next.previous = null;
+        }
+    }
+    
     @Override
     public String toString() {
         return "[loc:" + this.getLocation().toString() + ", h:" + this.getHeading() + "]";

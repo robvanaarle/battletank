@@ -1,24 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package battletank;
 
 import battletank.math.Box;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 
-/**
- *
- * @author raarle
- */
 public class Arena {
     protected int width;
     protected int height;
     protected Box box;
     
     protected ArrayList<Frame> frames = new ArrayList<>();
+    protected int maxFrames = 500;
+    
     protected Frame currentFrame = null;
     
     public Arena(int width, int height) {
@@ -64,6 +56,16 @@ public class Arena {
         // create the next frame
         this.currentFrame = this.currentFrame.next();
         
+        // delete old frames and objects
+        while (this.frames.size() > this.maxFrames) {
+            Frame firstFrame = this.frames.get(0);
+            for (battletank.objects.Object object : firstFrame.getObjects()) {
+                object.destroy();
+            }
+            
+            this.frames.remove(0);
+        }
+        
         battletank.objects.Object[] objects = this.currentFrame.getObjects();
         for (battletank.objects.Object object : objects) {
             object.tick();
@@ -72,5 +74,9 @@ public class Arena {
     
     public ArrayList<Frame> getFrames() {
         return this.frames;
+    }
+    
+    public Frame getCurrentFrame() {
+        return this.currentFrame;
     }
 }

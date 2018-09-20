@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class Tank extends Object implements battletank.math.Circle {
     
+    protected int id;
     protected double width = 40;
     protected double maxMoveSpeed = 1;
     protected double maxTurnSpeed = 0.1;
@@ -26,6 +27,14 @@ public class Tank extends Object implements battletank.math.Circle {
     public Tank(Player player, TankAI ai) {
         this.player = player;
         this.ai = ai;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public int getId() {
+        return this.id;
     }
     
     public void setPlayer(Player player) {

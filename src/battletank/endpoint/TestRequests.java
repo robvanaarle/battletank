@@ -69,7 +69,7 @@ public class TestRequests {
         testAddPlayer();
         
         
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             try {
                 Thread.currentThread().join(1000);
             } catch (InterruptedException e) {

@@ -18,6 +18,7 @@ public class Player {
     public double heading;
     public int x;
     public int y;
+    public int health;
     
     static public Player fromTank(Tank tank) {
         Player player = new Player();
@@ -31,6 +32,7 @@ public class Player {
         player.heading = tank.getHeading();
         player.x = (int) tank.getLocation().getX();
         player.y = (int) tank.getLocation().getY();
+        player.health = 100 - ((tank.getDamage() * 100)) / tank.getMaxDamage();
         
         return player;
     }

@@ -34,8 +34,8 @@ public class WebServer implements Runnable {
     protected int port;
     protected Endpoint endpoint;
     protected Gson gson = new Gson();
-    protected ArrayList<battletank.objects.Tank> tanks = new ArrayList<>();
     protected Random rand = new Random();
+    protected int nextTankId = 1;
     
     public WebServer(Endpoint endpoint, int port) {
         this.port = port;
@@ -112,7 +112,8 @@ public class WebServer implements Runnable {
             AddPlayerRequest request = gson.fromJson(requestBody, AddPlayerRequest.class);
             
             if (request != null) {
-                response.id = tanks.size();
+                response.id = nextTankId;
+                nextTankId++;
                 response.name = request.name;
                 
                 System.out.println("=> New player with name: " + request.name);
@@ -126,7 +127,7 @@ public class WebServer implements Runnable {
             player.setSecondaryColor(getRandomColor());
             battletank.tankai.EndpointAI tankAI = new battletank.tankai.EndpointAI();
             Tank tank = new Tank(player, tankAI);
-            tanks.add(tank);
+            tank.setId(response.id);
             
             tank.setLocation(new Point2D(rand.nextInt(endpoint.getArena().getWidth()), rand.nextInt(endpoint.getArena().getHeight())));
             
@@ -152,15 +153,20 @@ public class WebServer implements Runnable {
             } else {
                 response.error = "Unable to parse body";
             }
+            
+            battletank.objects.Object[] tanks = endpoint.getArena().getObjects(battletank.objects.Tank.class);
 
             // handle commands
             for (int i = 0; i < request.commands.length; i++) {
                 Command command = request.commands[i];
-                if (command.player_id > tanks.size()) {
-                    continue;
+                
+                for (int t = 0; t < tanks.length; t++) {
+                    Tank tank = (Tank) tanks[t];
+                    if (tank.getId() == command.player_id) {
+                        ((battletank.tankai.EndpointAI)tank.getTankAI()).setCommand(command);
+                        break;
+                    }
                 }
-                battletank.tankai.EndpointAI tankAI = (battletank.tankai.EndpointAI) tanks.get(command.player_id).getTankAI();
-                tankAI.setCommand(command);
             }
             
             endpoint.getArena().tick();
@@ -168,9 +174,9 @@ public class WebServer implements Runnable {
             
             
             // get game state
-            response.players = new Player[tanks.size()];
-            for (int i = 0; i < tanks.size(); i++) {
-                Player player = Player.fromTank(tanks.get(i));
+            response.players = new Player[tanks.length];
+            for (int i = 0; i < tanks.length; i++) {
+                Player player = Player.fromTank((Tank)tanks[i]);
                 player.id = i;
                 
                 response.players[i] = player;

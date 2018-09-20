@@ -12,4 +12,12 @@ package battletank.endpoint;
 public class Shell {
     int x;
     int y;
+    
+    static public Shell fromBattletankShell(battletank.objects.Shell bShell) {
+        Shell result = new Shell();
+        result.x = (int) bShell.getLocation().getX();
+        result.y = (int) bShell.getLocation().getY();
+        
+        return result;
+    }
 }

@@ -122,7 +122,12 @@ public class WebServer implements Runnable {
             battletank.tankai.EndpointAI tankAI = new battletank.tankai.EndpointAI();
             Tank tank = new Tank(player, tankAI);
             tanks.add(tank);
-            tank.setLocation(new Point2D(30, 200));
+            
+            java.util.Random r = new java.util.Random();
+            
+            tank.setLocation(new Point2D(r.nextInt(endpoint.getArena().getWidth()), r.nextInt(endpoint.getArena().getHeight())));
+            
+            
             endpoint.getArena().addObject(tank);
             
             endpoint.refresh();
@@ -157,6 +162,16 @@ public class WebServer implements Runnable {
             
             endpoint.getArena().tick();
             endpoint.refresh();
+            
+            
+            // get game state
+            response.players = new Player[tanks.size()];
+            for (int i = 0; i < tanks.size(); i++) {
+                Player player = Player.fromTank(tanks.get(i));
+                player.id = i;
+                
+                response.players[i] = player;
+            }
             
             return gson.toJson(response);
         }

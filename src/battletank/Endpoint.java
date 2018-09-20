@@ -80,13 +80,6 @@ public class Endpoint implements Runnable {
         Endpoint app = new Endpoint();
         app.init();
         app.start();
-        
-        //Gson g = new Gson();
-
-        //Person person = g.fromJson("{\"name\": \"John\", \"values\": [1, 2]}", Person.class);
-        //System.out.println(person.name); //John
-
-        //System.out.println(g.toJson(person)); // {"name":"John"}
     }
     
     static class Person {

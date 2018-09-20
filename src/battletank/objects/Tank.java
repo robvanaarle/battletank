@@ -36,6 +36,10 @@ public class Tank extends Object implements battletank.math.Circle {
         return this.player;
     }
     
+    public TankAI getTankAI() {
+        return this.ai;
+    }
+    
     public void shoot() {
         
         // don't shoot when the maximum number of shells has been reached

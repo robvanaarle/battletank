@@ -46,7 +46,7 @@ public class TestRequests {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setDoOutput(true);
         
-        String request = "{\"commands\": [{\"player_id\": 123, \"move\": \"forward\"}]}";
+        String request = "{\"commands\": [{\"player_id\": 0, \"move\": \"forward\", \"turn\": \"left\", \"fire\": true}]}";
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.write(request.getBytes());
         out.flush();
@@ -67,6 +67,15 @@ public class TestRequests {
     
     public static void main(String[] args) throws Exception {
         testAddPlayer();
-        //testTick();
+        
+        
+        for (int i = 0; i < 5; i++) {
+            try {
+                Thread.currentThread().join(1000);
+            } catch (InterruptedException e) {
+                System.out.println(e);
+            }
+            testTick();
+        }
     }
 }

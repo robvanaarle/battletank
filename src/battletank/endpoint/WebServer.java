@@ -22,6 +22,7 @@ import static java.lang.System.in;
 import static java.lang.System.out;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  *
@@ -31,7 +32,7 @@ public class WebServer implements Runnable {
     protected int port;
     protected Endpoint endpoint;
     protected Gson gson = new Gson();
-    protected int nextPlayerId = 1;
+    protected ArrayList<battletank.objects.Tank> tanks = new ArrayList<>();
     
     public WebServer(Endpoint endpoint, int port) {
         this.port = port;
@@ -108,8 +109,7 @@ public class WebServer implements Runnable {
             AddPlayerRequest request = gson.fromJson(requestBody, AddPlayerRequest.class);
             
             if (request != null) {
-                response.id = nextPlayerId;
-                nextPlayerId++;
+                response.id = tanks.size();
                 response.name = request.name;
                 
                 System.out.println("=> New player with name: " + request.name);
@@ -121,6 +121,7 @@ public class WebServer implements Runnable {
             battletank.Player player = new battletank.Player(request.name);
             battletank.tankai.EndpointAI tankAI = new battletank.tankai.EndpointAI();
             Tank tank = new Tank(player, tankAI);
+            tanks.add(tank);
             tank.setLocation(new Point2D(30, 200));
             endpoint.getArena().addObject(tank);
             
@@ -144,6 +145,17 @@ public class WebServer implements Runnable {
                 response.error = "Unable to parse body";
             }
 
+            // handle commands
+            for (int i = 0; i < request.commands.length; i++) {
+                Command command = request.commands[i];
+                if (command.player_id > tanks.size()) {
+                    continue;
+                }
+                battletank.tankai.EndpointAI tankAI = (battletank.tankai.EndpointAI) tanks.get(command.player_id).getTankAI();
+                tankAI.setCommand(command);
+            }
+            
+            endpoint.getArena().tick();
             endpoint.refresh();
             
             return gson.toJson(response);

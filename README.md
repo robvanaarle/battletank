@@ -26,7 +26,7 @@ Windows
     cd build
     java battletank/Battletank
     - or -
-    ./endpoint.sh
+    java -cp ".:../libs/gson-2.8.5.jar" battletank/Endpoint
 
 # Docker
     docker-compose up -d novnc

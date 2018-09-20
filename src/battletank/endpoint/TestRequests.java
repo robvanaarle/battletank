@@ -17,12 +17,12 @@ import java.net.URL;
  */
 public class TestRequests {
     
-    public static void testAddPlayer() throws Exception {
+    public static void testAddPlayer(String name) throws Exception {
         URL url = new URL("http://localhost:9001/addplayer"); // "http://tank2.free.beeceptor.com"
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setDoOutput(true);
         
-        String request = "{\"name\": \"Ewout\"}";
+        String request = "{\"name\": \"" + name + "\"}";
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.write(request.getBytes());
         out.flush();
@@ -46,7 +46,7 @@ public class TestRequests {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setDoOutput(true);
         
-        String request = "{\"commands\": [{\"player_id\": 2, \"move\": \"forward\", \"turn\": \"left\", \"fire\": true}]}";
+        String request = "{\"commands\": [{\"player_id\": 1, \"move\": \"backwards\", \"turn\": \"left\", \"fire\": true}, {\"player_id\": 2, \"move\": \"forward\", \"turn\": \"left\", \"fire\": true}]}";
         
        //request = "{\"commands\": []}";
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
@@ -68,12 +68,13 @@ public class TestRequests {
     }
     
     public static void main(String[] args) throws Exception {
-        testAddPlayer();
+        testAddPlayer("Rob");
+        testAddPlayer("Ewout");
         
         
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             try {
-                Thread.currentThread().join(1000);
+                Thread.currentThread().join(100);
             } catch (InterruptedException e) {
                 System.out.println(e);
             }

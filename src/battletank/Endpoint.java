@@ -27,7 +27,7 @@ public class Endpoint implements Runnable {
     }
     
     public void init() {
-        arena = new Arena(600, 400);
+        arena = new Arena(1000, 600);
         server = new WebServer(this, port);
         
         if (useGui) {

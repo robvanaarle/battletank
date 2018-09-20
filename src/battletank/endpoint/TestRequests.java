@@ -22,7 +22,7 @@ public class TestRequests {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setDoOutput(true);
         
-        String request = "{\"name\": \"Rob\"}";
+        String request = "{\"name\": \"Ewout\"}";
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
         out.write(request.getBytes());
         out.flush();

@@ -118,11 +118,11 @@ public class WebServer implements Runnable {
                 response.error = "Unable to parse body";
             }
 
-            /*battletank.Player player = new battletank.Player(request.name);
+            battletank.Player player = new battletank.Player(request.name);
             battletank.tankai.EndpointAI tankAI = new battletank.tankai.EndpointAI();
             Tank tank = new Tank(player, tankAI);
             tank.setLocation(new Point2D(30, 200));
-            endpoint.getArena().addObject(tank);*/
+            endpoint.getArena().addObject(tank);
             
             endpoint.refresh();
             return gson.toJson(response);

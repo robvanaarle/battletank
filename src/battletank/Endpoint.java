@@ -70,20 +70,8 @@ public class Endpoint implements Runnable {
         }
         
         System.out.println(".");
-        
-        Player player;
-        TankAI tankAI;
-        
-        player = new Player("Rob");
-        //tankAI = new battletank.tankai.RoundedRectangleAI(false);
-        //tankAI = new battletank.tankai.StraightAheadAI();
-        tankAI = new battletank.tankai.RandomAI();
-        Tank tank1 = new Tank(player, tankAI);
-        tank1.setLocation(new Point2D(30, 30));
-        tank1.setHeading(Math.PI/4);
-        arena.addObject(tank1);
 
-        //arenaPanel.setFrame(arena.getCurrentFrame());
+        arenaPanel.setFrame(arena.getCurrentFrame());
         playersPanel.setFrame(arena.getCurrentFrame());
         mainWindow.repaint();
     }

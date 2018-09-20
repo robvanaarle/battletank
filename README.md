@@ -27,3 +27,9 @@ Windows
     java battletank/Battletank
     - or -
     ./endpoint.sh
+
+# Docker
+    docker-compose up -d novnc
+    docker-compose up battletank
+
+Open localhost:8080/vnc.html and click connect.

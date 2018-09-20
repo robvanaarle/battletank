@@ -1,0 +1,22 @@
+version: '3.0'
+services:
+  battletank:
+    build: .
+    environment:
+      - DISPLAY=novnc:0.0
+    depends_on:
+      - novnc
+    networks:
+      - x11
+  novnc:
+    image: theasp/novnc:latest
+    environment:
+      - DISPLAY_WIDTH=1600
+      - DISPLAY_HEIGHT=968
+      - RUN_XTERM=no
+    ports:
+      - "8080:8080"
+    networks:
+      - x11
+networks:
+  x11:

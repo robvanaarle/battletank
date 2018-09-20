@@ -14,15 +14,17 @@ import com.sun.net.httpserver.HttpHandler;
 
 
 import com.sun.net.httpserver.HttpServer;
-import java.io.BufferedReader;
+import static com.sun.net.httpserver.HttpServer.create;
+import java.awt.Color;
+import static java.awt.Color.blue;
+import static java.awt.Color.green;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import static java.lang.System.in;
-import static java.lang.System.out;
+import static java.lang.Math.random;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -33,6 +35,7 @@ public class WebServer implements Runnable {
     protected Endpoint endpoint;
     protected Gson gson = new Gson();
     protected ArrayList<battletank.objects.Tank> tanks = new ArrayList<>();
+    protected Random rand = new Random();
     
     public WebServer(Endpoint endpoint, int port) {
         this.port = port;
@@ -119,13 +122,13 @@ public class WebServer implements Runnable {
             }
 
             battletank.Player player = new battletank.Player(request.name);
+            player.setPrimaryColor(getRandomColor());
+            player.setSecondaryColor(getRandomColor());
             battletank.tankai.EndpointAI tankAI = new battletank.tankai.EndpointAI();
             Tank tank = new Tank(player, tankAI);
             tanks.add(tank);
             
-            java.util.Random r = new java.util.Random();
-            
-            tank.setLocation(new Point2D(r.nextInt(endpoint.getArena().getWidth()), r.nextInt(endpoint.getArena().getHeight())));
+            tank.setLocation(new Point2D(rand.nextInt(endpoint.getArena().getWidth()), rand.nextInt(endpoint.getArena().getHeight())));
             
             
             endpoint.getArena().addObject(tank);
@@ -180,5 +183,13 @@ public class WebServer implements Runnable {
     public void start() {
         Thread t = new Thread(this);
         t.start();
+    }
+    
+    public Color getRandomColor() {
+        float r = rand.nextFloat();
+        float g = rand.nextFloat();
+        float b = rand.nextFloat();
+        Color randomColor = new Color(r, g, b);
+        return randomColor;
     }
 }

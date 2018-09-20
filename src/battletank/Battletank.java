@@ -96,7 +96,7 @@ public class Battletank implements Runnable {
                 System.out.print(i + "...");
             }
             
-            arena.tick();
+            //arena.tick();
             
             arenaPanel.setFrame(arena.getCurrentFrame());
             playersPanel.setFrame(arena.getCurrentFrame());
@@ -109,6 +109,7 @@ public class Battletank implements Runnable {
             }
         }
         
+        /*
         // replay
         ArrayList<Frame> frames = arena.getFrames();
         for (Frame f : frames) {
@@ -121,7 +122,7 @@ public class Battletank implements Runnable {
             } catch (InterruptedException e) {
                 System.out.println(e);
             }
-        }
+        }*/
     }
     
     public static void main(String[] args) {

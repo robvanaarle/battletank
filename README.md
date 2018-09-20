@@ -25,3 +25,5 @@ Windows
 ###
     cd build
     java battletank/Battletank
+    - or -
+    ./endpoint.sh

@@ -1,0 +1,108 @@
+
+package battletank;
+
+import battletank.endpoint.*;
+import battletank.math.Point2D;
+import battletank.objects.Tank;
+import battletank.tankai.TankAI;
+import com.google.gson.Gson;
+import javax.swing.JFrame;
+
+
+public class Endpoint implements Runnable {
+    protected Arena arena;
+    protected WebServer server;
+    protected int port = 9001;
+    
+    protected boolean useGui = true;
+    protected JFrame mainWindow;
+    protected ArenaPanel arenaPanel;
+    protected PlayersPanel playersPanel;
+    
+    public Endpoint() {
+    }
+    
+    public Arena getArena() {
+        return arena;
+    }
+    
+    public void init() {
+        arena = new Arena(600, 400);
+        server = new WebServer(this, port);
+        
+        if (useGui) {
+            showGui();
+        }
+    }
+    
+    public void showGui() {
+        playersPanel = new PlayersPanel(arena);
+        playersPanel.setSize(200, arena.getHeight());
+        playersPanel.setLocation(0, 0);
+
+        arenaPanel = new ArenaPanel(arena);
+        arenaPanel.setSize(arena.getWidth(), arena.getHeight());
+        arenaPanel.setLocation(playersPanel.getWidth(), 0);
+
+        mainWindow = new JFrame("BattleTank Endpoint");
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainWindow.setSize(arenaPanel.getWidth()+playersPanel.getWidth(), arenaPanel.getHeight()+20);
+        mainWindow.setLayout(null);
+
+        mainWindow.add(playersPanel);
+        mainWindow.add(arenaPanel);
+        mainWindow.setVisible(true);
+    }
+    
+    public void start() {
+        Thread t = new Thread(this);
+        t.start();
+    }
+    
+    @Override
+    public void run() {
+        server.start();
+    }
+    
+    public void refresh() {
+        if (!useGui) {
+            return;
+        }
+        
+        System.out.println(".");
+        
+        Player player;
+        TankAI tankAI;
+        
+        player = new Player("Rob");
+        //tankAI = new battletank.tankai.RoundedRectangleAI(false);
+        //tankAI = new battletank.tankai.StraightAheadAI();
+        tankAI = new battletank.tankai.RandomAI();
+        Tank tank1 = new Tank(player, tankAI);
+        tank1.setLocation(new Point2D(30, 30));
+        tank1.setHeading(Math.PI/4);
+        arena.addObject(tank1);
+
+        //arenaPanel.setFrame(arena.getCurrentFrame());
+        playersPanel.setFrame(arena.getCurrentFrame());
+        mainWindow.repaint();
+    }
+    
+    public static void main(String[] args) {
+        Endpoint app = new Endpoint();
+        app.init();
+        app.start();
+        
+        //Gson g = new Gson();
+
+        //Person person = g.fromJson("{\"name\": \"John\", \"values\": [1, 2]}", Person.class);
+        //System.out.println(person.name); //John
+
+        //System.out.println(g.toJson(person)); // {"name":"John"}
+    }
+    
+    static class Person {
+       public String name;
+       int[] values;
+    }
+}

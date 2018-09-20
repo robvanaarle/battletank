@@ -183,6 +183,7 @@ public class Tank extends Object implements battletank.math.Circle {
         Tank copy = new Tank(this.getPlayer(), this.ai);
         copy.damage = this.damage;
         copy.reloadTimeout = this.reloadTimeout;
+        copy.id = this.id;
         
         return copy;
     }
